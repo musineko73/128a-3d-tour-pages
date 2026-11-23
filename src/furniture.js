@@ -229,7 +229,19 @@ export class Furniture {
             box(0.07, 0.014, 0.019, steel, sx + 0.034, ty + 0.10, tz);
           }
         }
-        if (f.cooktop) { const c = box(0.6, 0.006, 0.5, M.black, w > 1.2 ? -w * 0.18 : 0, baseH + top, 0.02); c.castShadow = false; }
+        if (f.cooktop) {
+          const x = w > 1.2 ? -w * 0.18 : 0;
+          box(0.6, 0.006, 0.5, M.black, x, baseH + top, 0.02).castShadow = false;
+          if (detailed) {
+            const marks = new THREE.MeshStandardMaterial({ color: 0x7E807D, roughness: 0.55 });
+            for (const [dx, z, radius] of [[-0.14,-0.105,0.087],[0.14,-0.10,0.08],[-0.14,0.12,0.064],[0.14,0.108,0.09]]) {
+              const ring = new THREE.Mesh(new THREE.RingGeometry(radius - 0.002, radius, 56).rotateX(-Math.PI / 2), marks);
+              ring.position.set(x + dx, baseH + top + 0.007, z);
+              ring.castShadow = false;
+              g.add(ring);
+            }
+          }
+        }
         if (Array.isArray(f.upper) && f.type === 'counter') {
           displayCabinets(g, f, box, stone, M);
         } else if (f.upper && f.type === 'counter') {

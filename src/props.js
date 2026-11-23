@@ -202,12 +202,38 @@ export function addProps(f, g, fit) {
     sewnCushion(P, w * 0.16, y - 0.035, -d * 0.19, 0.38, 0.31, '#9B4E3A', -0.15);
   }
   if (set === 'dining') { const y = on(0, 0, 0.74); bowl(P, 0, y, 0, 0.13, '#F2EFE8', true); mug(P, -0.22, y, 0.12, '#E3B23C'); mug(P, 0.2, y, -0.1, '#8FA58A'); plate(P, 0.18, y, 0.16); vase(P, -0.12, y, -0.2, 0.18, '#D46A4C'); }
+  if (set === 'wine') {
+    const y = on(0, 0, 0.75), x = -0.15;
+    lathe([[0, 0], [0.038, 0], [0.039, 0.205], [0.034, 0.23], [0.014, 0.258], [0.014, 0.315], [0, 0.315]],
+      mat('#283726', 0.23), x, y, 0, P);
+    for (const [r, h, bottom, color] of [[0.0395, 0.084, 0.082, '#DEC6A0'], [0.015, 0.055, 0.265, '#693D49']]) {
+      mesh(new THREE.CylinderGeometry(r, r, h, 40), mat(color, 0.65), x, y + bottom + h / 2, 0, P);
+    }
+    const glass = new THREE.MeshPhysicalMaterial({ color: 0xF5F8FA, roughness: 0.1, transmission: 0.94, thickness: 0.006, side: THREE.DoubleSide });
+    for (const [gx, gz] of [[0.03, -0.11], [0.19, 0.11], [0.34, -0.10]]) {
+      const goblet = lathe([[0, 0], [0.035, 0], [0.037, 0.006], [0.005, 0.01], [0.005, 0.087], [0.034, 0.108],
+        [0.043, 0.142], [0.034, 0.19], [0.032, 0.19], [0.041, 0.142], [0.032, 0.11], [0, 0.092]], glass, gx, y, gz, P);
+      goblet.castShadow = false;
+    }
+  }
   if (set === 'kitchen') { // 조리대(싱크 = 0.15w, 화구 = -0.18w): 화구 위 주전자, 오른쪽 끝 그릇·작은 화분
     const y = f.h ?? 0.9, bz = -d / 2 + 0.14;
     kettle(P, -w * 0.18 - 0.12, y, 0.02);
     bowl(P, w / 2 - 0.2, y, 0.02, 0.1, '#E6DDCF'); bowl(P, w / 2 - 0.2, y + 0.03, 0.02, 0.085, '#D46A4C'); smallPlant(P, w / 2 - 0.1, y, 0.12, fit);
   }
   if (set === 'pantry') { const y = f.h ?? 0.9; tray(P, -0.2, y, 0); bowl(P, -0.2, y + 0.02, 0, 0.1, '#F2EFE8', true); vase(P, 0.25, y, -0.05, 0.24, '#F2EFE8'); }
+  if (set === 'counter-display') {
+    const y = f.h ?? 0.9, x = -w / 2 + 0.37, z = -0.10;
+    mesh(new RoundedBoxGeometry(0.46, 0.275, 0.33, 3, 0.014), mat('#D3CDC1', 0.43), x, y + 0.144, z, P);
+    mesh(new RoundedBoxGeometry(0.334, 0.198, 0.012, 2, 0.004), mat('#292B2A', 0.26), x - 0.048, y + 0.143, z + 0.168, P);
+    mesh(new THREE.BoxGeometry(0.048, 0.021, 0.005), mat('#5E8175', 0.39), x + 0.172, y + 0.217, z + 0.168, P);
+    mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.012, 24).rotateX(Math.PI / 2), mat('#777771', 0.46), x + 0.171, y + 0.089, z + 0.175, P);
+    const right = w / 2 - 0.25;
+    for (let i = 0; i < 3; i++) plate(P, right, y + i * 0.014, -0.07, 0.103, '#EBE3D4');
+    bowl(P, right, y + 0.043, -0.07, 0.074, '#A7AEA0');
+    bowl(P, right - 0.27, y, -0.13, 0.085, '#C4906F');
+    mug(P, right - 0.23, y, 0.13, '#E7DBC8');
+  }
   if (set === 'office') { // 책상(앞 = +z 쪽에 앉는다)
     const y = on(0, 0, 0.75), bz = -d / 2 + 0.12;
     laptop(P, -0.1, y, 0.0, 0.08); deskLamp(P, -w / 2 + 0.14, y, bz + 0.02); mug(P, w / 2 - 0.12, y, -0.12, '#D9A63A'); bookStack(P, w / 2 - 0.2, y, bz + 0.02, 3); smallPlant(P, 0.2, y, bz + 0.02, fit);
