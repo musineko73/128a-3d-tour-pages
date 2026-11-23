@@ -25,7 +25,7 @@ class Tour {
     const bar = $('#load i'), txt = $('#load p');
     const step = (p, t) => { bar.style.width = `${Math.round(p * 100)}%`; if (t) txt.textContent = t; };
     step(0.05, '평면도를 읽는 중');
-    const S = this.S = await (await fetch('scene.json')).json();
+    const S = this.S = await (await fetch('scene.json', { cache: 'no-cache' })).json();
     document.title = `${S.name} · 3D 투어`;
     $('#title').textContent = S.name;
     const total = S.rooms.reduce((n, r) => n + (r.stated ?? r.area), 0);
