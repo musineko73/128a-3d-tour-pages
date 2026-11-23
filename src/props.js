@@ -223,16 +223,16 @@ export function addProps(f, g, fit) {
   }
   if (set === 'pantry') { const y = f.h ?? 0.9; tray(P, -0.2, y, 0); bowl(P, -0.2, y + 0.02, 0, 0.1, '#F2EFE8', true); vase(P, 0.25, y, -0.05, 0.24, '#F2EFE8'); }
   if (set === 'counter-display') {
-    const y = f.h ?? 0.9, x = -w / 2 + 0.37, z = -0.10;
+    const y = f.h ?? 0.9, x = w / 2 - 0.31, z = -0.10;
     mesh(new RoundedBoxGeometry(0.46, 0.275, 0.33, 3, 0.014), mat('#D3CDC1', 0.43), x, y + 0.144, z, P);
     mesh(new RoundedBoxGeometry(0.334, 0.198, 0.012, 2, 0.004), mat('#292B2A', 0.26), x - 0.048, y + 0.143, z + 0.168, P);
     mesh(new THREE.BoxGeometry(0.048, 0.021, 0.005), mat('#5E8175', 0.39), x + 0.172, y + 0.217, z + 0.168, P);
     mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.012, 24).rotateX(Math.PI / 2), mat('#777771', 0.46), x + 0.171, y + 0.089, z + 0.175, P);
-    const right = w / 2 - 0.25;
+    const right = w / 2 - 0.81;
     for (let i = 0; i < 3; i++) plate(P, right, y + i * 0.014, -0.07, 0.103, '#EBE3D4');
     bowl(P, right, y + 0.043, -0.07, 0.074, '#A7AEA0');
-    bowl(P, right - 0.27, y, -0.13, 0.085, '#C4906F');
-    mug(P, right - 0.23, y, 0.13, '#E7DBC8');
+    bowl(P, -0.67, y, -0.13, 0.085, '#C4906F');
+    mug(P, -0.55, y, 0.13, '#E7DBC8');
   }
   if (set === 'office') { // 책상(앞 = +z 쪽에 앉는다)
     const y = on(0, 0, 0.75), bz = -d / 2 + 0.12;

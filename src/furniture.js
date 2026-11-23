@@ -5,6 +5,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { texMat, meterUV, TILE, TEX } from './look.js';
 import { displayCabinets, insetSink, quartzMaterial, STONE_TILE } from './kitchen.js';
+import { equipment } from './equipment.js';
 
 // 모델 파일과 모델의 앞 방향 보정(라디안). 모델 앞이 +z가 아니면 여기서 돌린다.
 const GLB = {
@@ -162,6 +163,8 @@ export class Furniture {
     const glb = GLB[f.type];
     if (f.model && f.type !== 'pendant' && this.cache.has(f.model)) return this.glbItem(f, g, w, d, h); // scene.json f.model = 3D 모델 파일로 바꾼 가구(파일이 없으면 아래 코드 가구)
     switch (f.type) {
+      case 'treadmill': case 'massage-chair': case 'sport-rack': case 'bike-storage':
+        return equipment(f, g);
       case 'tv': {
         if (f.variant !== 'wall') return this.glbItem(f, g, w, d, h);
         const y = f.y0 ?? 0.77;
@@ -230,9 +233,15 @@ export class Furniture {
           }
         }
         if (f.cooktop) {
-          const x = w > 1.2 ? -w * 0.18 : 0;
+          const x = Array.isArray(f.upper) && f.upper.length ? (f.upper[0][0] + f.upper[0][1]) / 2 : w > 1.2 ? -w * 0.18 : 0;
           box(0.6, 0.006, 0.5, M.black, x, baseH + top, 0.02).castShadow = false;
           if (detailed) {
+            if (Array.isArray(f.upper) && f.upper.length) {
+              box(0.64, 0.043, 0.30, M.steel, x, 1.497, -d / 2 + 0.04);
+              for (const offset of [-0.062, -0.024, 0.014]) {
+                box(0.48, 0.006, 0.013, M.black, x, 1.491, -d / 2 + 0.04 + offset);
+              }
+            }
             const marks = new THREE.MeshStandardMaterial({ color: 0x7E807D, roughness: 0.55 });
             for (const [dx, z, radius] of [[-0.14,-0.105,0.087],[0.14,-0.10,0.08],[-0.14,0.12,0.064],[0.14,0.108,0.09]]) {
               const ring = new THREE.Mesh(new THREE.RingGeometry(radius - 0.002, radius, 56).rotateX(-Math.PI / 2), marks);
