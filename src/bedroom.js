@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { fabric } from './props.js';
 
-function drapedCover(bed, height) {
+function drapedCover(bed, height, color) {
   const width = bed.w, foot = bed.d / 2;
   const geometry = new THREE.PlaneGeometry(width + 0.44, 1.42, 72, 64);
   geometry.rotateX(-Math.PI / 2);
@@ -22,11 +22,20 @@ function drapedCover(bed, height) {
     uv.setXY(i, x / 0.62, -z / 0.62);
   }
   geometry.computeVertexNormals();
-  const material = fabric('#827C75').clone();
+  const material = fabric(color).clone();
   material.side = THREE.DoubleSide;
   const cover = new THREE.Mesh(geometry, material);
   cover.castShadow = cover.receiveShadow = true;
   return cover;
+}
+
+export function dressBed(bedObject, bed, color) {
+  const ray = new THREE.Raycaster();
+  bedObject.updateWorldMatrix(true, true);
+  const center = bedObject.localToWorld(new THREE.Vector3(0, 2, bed.d * 0.20));
+  ray.set(center, new THREE.Vector3(0, -1, 0));
+  const surface = ray.intersectObject(bedObject, true)[0];
+  if (surface) bedObject.add(drapedCover(bed, surface.point.y, color));
 }
 
 export function stageBedroom(house, furniture, scene) {
@@ -107,12 +116,7 @@ export function stageBedroom(house, furniture, scene) {
 
   const bedObject = furniture.group.children.find(o => o.userData.furniture === 'bed-single' && o.position.x === bed.x && o.position.z === bed.z);
   if (!bedObject) return;
-  const ray = new THREE.Raycaster();
-  bedObject.updateWorldMatrix(true, true);
-  const center = bedObject.localToWorld(new THREE.Vector3(0, 2, bed.d * 0.20));
-  ray.set(center, new THREE.Vector3(0, -1, 0));
-  const surface = ray.intersectObject(bedObject, true)[0];
-  if (surface) bedObject.add(drapedCover(bed, surface.point.y));
+  dressBed(bedObject, bed, '#827C75');
   for (const z of [-0.62, -0.21, 0.21, 0.62]) {
     const light = new THREE.SpotLight(0xFFD5A0, 0.24, 0.85, 1.12, 0.94, 2);
     light.position.set(bed.w * 0.42, 0.15, z);

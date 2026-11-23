@@ -5,7 +5,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { loadLook, loadExtraTex, viewEnvironment, viewBackdrop, Post } from './look.js';
 import { House } from './house.js';
 import { Furniture } from './furniture.js';
-import { stageBedroom } from './bedroom.js';
+import { dressBed, stageBedroom } from './bedroom.js';
+import { styleWalls } from './styling.js';
 import { Nav } from './nav.js';
 import { Exterior } from './exterior.js';
 
@@ -47,10 +48,18 @@ class Tour {
     if (S.exterior !== '3d') { this.backdrop = viewBackdrop(C, Math.max(W, D) / 2 + 16, -4, S.floorLevel ? 1.45 : null); this.scene.add(this.backdrop); } // 2층 같은 낮은 층: 사진 지평선 = 눈높이
     step(0.35, '벽을 세우는 중');
     this.house = new House(this.scene, S).build();
+    styleWalls(this.house);
     if (S.exterior === '3d') { this.ext = await new Exterior(this.scene, S, this.house).build(); this.backdrop = this.ext; }
     this.lights(S);
     step(0.5, '가구를 들이는 중');
     this.furn = await new Furniture(this.scene, S).build();
+    if (S.style?.bedCovers) {
+      for (const bed of S.furniture.filter(f => f.type === 'bed' || f.type === 'bed-single')) {
+        const color = S.style.bedCovers[this.house.roomAt(bed.x, bed.z)?.name];
+        const model = this.furn.group.children.find(o => o.userData.furniture === bed.type && o.position.x === bed.x && o.position.z === bed.z);
+        if (color && model) dressBed(model, bed, color);
+      }
+    }
     if (S.style?.bedroomStudy && !S.bare) stageBedroom(this.house, this.furn, this.scene);
     this.furn.captureKitchenReflection(R);
     // 카메라가 멈출 것: 벽 + 열린 문짝 + 1m 넘는 가구(장·냉장고·TV·상부장 등)
